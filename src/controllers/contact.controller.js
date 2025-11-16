@@ -21,41 +21,39 @@ exports.createContact = async(req, res, next) => {
 
         const adminEmail = process.env.ADMIN_EMAIL;
 
-        // Send admin notification
+        // Send admin notification (await like booking flow)
         if (adminEmail) {
             const adminMail = contactEmailTemplates.adminContactNotification(contact);
-            emailService
-                .sendMail({
+            try {
+                await emailService.sendMail({
                     to: adminEmail,
                     subject: adminMail.subject,
                     text: adminMail.text,
                     html: adminMail.html,
-                })
-                .then(() => {
-                    logger.info(`Admin contact email sent for contact: ${contact._id}`);
-                })
-                .catch((err) => {
-                    logger.error(`Error sending admin contact email: ${err.message}`);
                 });
+                logger.info(`Admin contact email sent for contact: ${contact._id}`);
+            } catch (err) {
+                logger.error(`Error sending admin contact email: ${err.message}`);
+                // Do not block response if email fails
+            }
         } else {
             logger.warn('ADMIN_EMAIL is not set. Skipping admin contact email.');
         }
 
-        // Send confirmation to client
+        // Send confirmation to client (await like booking flow)
         const clientMail = contactEmailTemplates.clientContactConfirmation(contact);
-        emailService
-            .sendMail({
+        try {
+            await emailService.sendMail({
                 to: contact.email,
                 subject: clientMail.subject,
                 text: clientMail.text,
                 html: clientMail.html,
-            })
-            .then(() => {
-                logger.info(`Client contact confirmation sent for contact: ${contact._id}`);
-            })
-            .catch((err) => {
-                logger.error(`Error sending client contact confirmation: ${err.message}`);
             });
+            logger.info(`Client contact confirmation sent for contact: ${contact._id}`);
+        } catch (err) {
+            logger.error(`Error sending client contact confirmation: ${err.message}`);
+            // Do not block response if email fails
+        }
 
         res.status(201).json({
             status: 'success',
