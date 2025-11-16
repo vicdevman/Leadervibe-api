@@ -53,17 +53,12 @@ app.use('/api/v1/booking', bookingRoutes);
 app.use('/api/v1/contact', contactRoutes);
 
 // Health check route
-app.get('/health', (req, res) => {
+app.get('/', (req, res) => {
     res.status(200).json({
         status: 'success',
-        message: 'Server is running',
+        message: 'Server is running!',
     });
 });
-
-// // Handle undefined routes
-// app.all('*', (req, res, next) => {
-//   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-// });
 
 // Global error handler
 app.use(errorMiddleware);
