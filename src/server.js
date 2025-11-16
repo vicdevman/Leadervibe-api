@@ -63,24 +63,30 @@ app.get('/', (req, res) => {
 // Global error handler
 app.use(errorMiddleware);
 
-// Start server
-const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
-    logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+// If running on Vercel/serverless, export the app and let the platform handle the server
+// Vercel sets process.env.VERCEL in its environment
+if (process.env.VERCEL) {
+    module.exports = app;
+} else {
+    // Local / non-serverless startup
+    const PORT = process.env.PORT || 3000;
+    const server = app.listen(PORT, () => {
+        logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
-    logger.error(err.name, err.message);
-    server.close(() => {
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err) => {
+        logger.error('UNHANDLED REJECTION! 💥 Shutting down...');
+        logger.error(err.name, err.message);
+        server.close(() => {
+            process.exit(1);
+        });
+    });
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (err) => {
+        logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+        logger.error(err.name, err.message);
         process.exit(1);
     });
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-    logger.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-    logger.error(err.name, err.message);
-    process.exit(1);
-});
+}
