@@ -15,6 +15,7 @@ const userRoutes = require('./routes/user.routes');
 const emailRoutes = require('./routes/email.routes');
 const bookingRoutes = require('./routes/booking.routes');
 const contactRoutes = require('./routes/contact.routes');
+const speakerRoutes = require('./routes/speaker.routes');
 
 // Import middleware
 const errorMiddleware = require('./middleware/error.middleware');
@@ -51,6 +52,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/emails', emailRoutes);
 app.use('/api/v1/booking', bookingRoutes);
 app.use('/api/v1/contact', contactRoutes);
+app.use('/api/v1/events/speakers', speakerRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
