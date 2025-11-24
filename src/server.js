@@ -17,6 +17,7 @@ const bookingRoutes = require('./routes/booking.routes');
 const contactRoutes = require('./routes/contact.routes');
 const speakerRoutes = require('./routes/speaker.routes');
 const aboutRoutes = require('./routes/about.routes');
+const galleryRoutes = require('./routes/gallery.routes');
 
 // Import middleware
 const errorMiddleware = require('./middleware/error.middleware');
@@ -55,6 +56,7 @@ app.use('/api/v1/booking', bookingRoutes);
 app.use('/api/v1/contact', contactRoutes);
 app.use('/api/v1/events/speakers', speakerRoutes);
 app.use('/api/v1/about/profiles', aboutRoutes);
+app.use('/api/v1/gallery', galleryRoutes);
 
 // Health check route
 app.get('/', (req, res) => {
